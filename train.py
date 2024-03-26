@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from warmup_scheduler import GradualWarmupScheduler
 
 def _train(model, args):
-    device = torch.device('mps')
+    device = args.device
     criterion = torch.nn.L1Loss()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-8)

@@ -16,9 +16,8 @@ def main(args):
     model = build_net()
     # print(model)
 
-    if torch.backends.mps.is_available():
-        device = torch.device('mps')
-        model.to(device)
+    model.to(device=args.device)
+    
     if args.mode == 'train':
         _train(model, args)
 
@@ -34,6 +33,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--mode', default='test', choices=['train', 'test'], type=str)
     parser.add_argument('--data_dir', type=str, default='')
+    parser.add_argument("--device", type=str, default='cuda:0', help="device")
 
     # Train
     parser.add_argument('--batch_size', type=int, default=32)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_image', type=bool, default=False, choices=[True, False])
 
     args = parser.parse_args()
-    args.model_save_dir = os.path.join('results/', 'ITS/', 'model')
+    args.model_save_dir = os.path.join('results/', 'ITS/', 'train')
     args.result_dir = os.path.join('results/', 'ITS/', 'test')
 
     main(args)

@@ -9,9 +9,9 @@ from pytorch_msssim import ssim
 import torch.nn.functional as f
 
 def _eval(model, args):
-    state_dict = torch.load(args.test_model, map_location='mps')
+    state_dict = torch.load(args.test_model, map_location=args.device)
     model.load_state_dict(state_dict['model'])
-    device = torch.device('mps')
+    device = args.device
     dataloader = test_dataloader(args.data_dir, batch_size=1, num_workers=0)
     adder = Adder()
     model.eval()

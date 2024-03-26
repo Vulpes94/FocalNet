@@ -5,8 +5,8 @@ from skimage.metrics import peak_signal_noise_ratio
 import torch.nn.functional as f
 
 
-def _valid(model, args, ep):
-    device = torch.device('mps')
+def _valid(model, args):
+    device = args.device
     data = valid_dataloader(args.data_dir, batch_size=1, num_workers=0)
     model.eval()
     psnr_adder = Adder()
