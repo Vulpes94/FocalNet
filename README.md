@@ -16,6 +16,32 @@ conda create -n forcalnet -y python=3.11
 conda activate forcalnet
 pip install -r requirements.txt
 ```
+### Download the Datasets
+- reside-indoor [[gdrive](https://drive.google.com/drive/folders/1pbtfTp29j7Ip-mRzDpMpyopCfXd-ZJhC?usp=sharing), [Baidu](https://pan.baidu.com/s/1jD-TU0wdtSoEb4ki-Cut2A?pwd=1lr0)]
+
+### Train on RESIDE-Indoor
+
+```sh
+python main.py --mode train --data_dir datasets/reside-indoor
+```
+
+### Evaluation
+#### Download the model [here](https://drive.google.com/drive/folders/1HXCwpDbzRL9KLc9XPhUPf2YisS_1wDxo?usp=sharing)
+#### Testing on SOTS-Indoor
+```sh
+python main.py --data_dir datasets/reside-indoor --test_model models/model_its.pkl --device [cuda,mps,cpu]
+```
+
+For training and testing, your directory structure should look like this
+
+`datasets` <br/>
+`├──reside-indoor` <br/>
+     `├──train`  <br/>
+          `├──gt`  <br/>
+          `└──hazy`  
+     `└──test`  <br/>
+          `├──gt`  <br/>
+          `└──hazy`  
 
 ## Results
 The resulting images can be downloaded [here](https://drive.google.com/drive/folders/1GWgeqDuqJmR_3wy985l6Jl_ExtC3uFI_?usp=sharing).
