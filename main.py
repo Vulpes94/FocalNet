@@ -1,5 +1,4 @@
 import os
-import torch
 import argparse
 from Net.FocalNet import build_net
 from train import _train
@@ -39,11 +38,11 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--learning_rate', type=float, default=8e-4)
     parser.add_argument('--weight_decay', type=float, default=0)
-    parser.add_argument('--num_epoch', type=int, default=1000)
+    parser.add_argument('--num_epoch', type=int, default=2000)
     parser.add_argument('--print_freq', type=int, default=100)
     parser.add_argument('--num_worker', type=int, default=16)
-    parser.add_argument('--save_freq', type=int, default=20)
-    parser.add_argument('--valid_freq', type=int, default=20)
+    parser.add_argument('--save_freq', type=int, default=50)
+    parser.add_argument('--valid_freq', type=int, default=50)
     parser.add_argument('--resume', type=str, default='')
 
 
@@ -52,7 +51,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_image', type=bool, default=False, choices=[True, False])
 
     args = parser.parse_args()
-    args.model_save_dir = os.path.join('results/', 'ITS/', 'train')
-    args.result_dir = os.path.join('results/', 'ITS/', 'test')
+    args.model_save_dir = os.path.join('results/', 'CSD/', 'train')
+    args.result_dir = os.path.join('results/', 'CSD/', 'test')
 
     main(args)
