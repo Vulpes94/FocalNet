@@ -15,7 +15,7 @@ def _train(model, args):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999), eps=1e-8)
     dataloader = train_dataloader(args.data_dir, args.batch_size, args.num_worker)
     max_iter = len(dataloader)
-    warmup_epochs=3
+    warmup_epochs=1
     scheduler_cosine = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.num_epoch-warmup_epochs, eta_min=1e-6)
     scheduler = GradualWarmupScheduler(optimizer, multiplier=1, total_epoch=warmup_epochs, after_scheduler=scheduler_cosine)
     scheduler.step()
@@ -37,6 +37,8 @@ def _train(model, args):
     iter_timer = Timer('m')
     best_psnr=-1
 
+    eval_now = max_iter//6-1
+
     for epoch_idx in range(epoch, args.num_epoch + 1):
 
         epoch_timer.tic()
@@ -55,10 +57,7 @@ def _train(model, args):
             l2 = criterion(pred_img[1], label_img2)
             l3 = criterion(pred_img[2], label_img)
             loss_content = l1+l2+l3
-            
-            '''
-            TypeError: Trying to convert ComplexFloat to the MPS backend but it does not have support for that dtype.
-            '''
+
             label_fft1 = torch.fft.fft2(label_img4, dim=(-2,-1))
             label_fft1 = torch.stack((label_fft1.real, label_fft1.imag), -1)
 
@@ -84,7 +83,7 @@ def _train(model, args):
 
             loss = loss_content + 0.1 * loss_fft
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 0.001)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 0.01)
             optimizer.step()
 
             iter_pixel_adder(loss_content.item())
@@ -103,10 +102,23 @@ def _train(model, args):
                 iter_timer.tic()
                 iter_pixel_adder.reset()
                 iter_fft_adder.reset()
+
+
+            if iter_idx%eval_now==0 and iter_idx>0 and (epoch_idx>20 or epoch_idx == 1):
+
+                save_name = os.path.join(args.model_save_dir, 'model_%d_%d.pkl' % (epoch_idx, iter_idx))
+                torch.save({'model': model.state_dict()}, save_name)
+
+                val_gopro = _valid(model, args, epoch_idx)
+                print('%03d epoch \n Average GOPRO PSNR %.2f dB' % (epoch_idx, val_gopro))
+                writer.add_scalar('PSNR_GOPRO', val_gopro, epoch_idx)
+                if val_gopro >= best_psnr:
+                    torch.save({'model': model.state_dict()}, os.path.join(args.model_save_dir, 'Best.pkl'))
+
+
         overwrite_name = os.path.join(args.model_save_dir, 'model.pkl')
-        torch.save({'model': model.state_dict(),
-                    'optimizer': optimizer.state_dict(),
-                    'epoch': epoch_idx}, overwrite_name)
+        torch.save({'model': model.state_dict()}, overwrite_name)
+
 
         if epoch_idx % args.save_freq == 0:
             save_name = os.path.join(args.model_save_dir, 'model_%d.pkl' % epoch_idx)

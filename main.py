@@ -36,14 +36,14 @@ if __name__ == '__main__':
     parser.add_argument("--device", type=str, default='cuda:0', help="device")
 
     # Train
-    parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--learning_rate', type=float, default=8e-4)
+    parser.add_argument('--batch_size', type=int, default=8)
+    parser.add_argument('--learning_rate', type=float, default=1e-4)
     parser.add_argument('--weight_decay', type=float, default=0)
-    parser.add_argument('--num_epoch', type=int, default=1000)
+    parser.add_argument('--num_epoch', type=int, default=30)
     parser.add_argument('--print_freq', type=int, default=100)
-    parser.add_argument('--num_worker', type=int, default=16)
-    parser.add_argument('--save_freq', type=int, default=20)
-    parser.add_argument('--valid_freq', type=int, default=20)
+    parser.add_argument('--num_worker', type=int, default=8)
+    parser.add_argument('--save_freq', type=int, default=1)
+    parser.add_argument('--valid_freq', type=int, default=1)
     parser.add_argument('--resume', type=str, default='')
 
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_image', type=bool, default=False, choices=[True, False])
 
     args = parser.parse_args()
-    args.model_save_dir = os.path.join('results/', 'ITS/', 'train')
-    args.result_dir = os.path.join('results/', 'ITS/', 'test')
+    args.model_save_dir = os.path.join('results/', 'OTS/', 'train')
+    args.result_dir = os.path.join('results/', 'OTS/', 'test')
 
     main(args)
